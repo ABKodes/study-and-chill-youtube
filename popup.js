@@ -69,8 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const tab = tabs[0];
       if (!tab) return setStatus('No active tab.');
       if (!isYouTubeUrl(tab.url)) return setStatus('Please open a YouTube video in the tab before setting as Tutorial.');
-      chrome.scripting.executeScript({target:{tabId:tab.id}, files:['tutorial-listener.js']}, () => {
-        if (chrome.runtime.lastError) return setStatus('Injection failed: '+chrome.runtime.lastError.message);
+      // MV2 injection: use tabs.executeScript instead of scripting.executeScript
+      chrome.tabs.executeScript(tab.id, { file: 'tutorial-listener.js' }, () => {
+        if (chrome.runtime.lastError) return setStatus('Injection failed: ' + chrome.runtime.lastError.message);
         chrome.storage.local.set({tutorialTab: tab.id}, () => { setStatus('Tutorial tab set.'); updateUI(); });
       });
     });
